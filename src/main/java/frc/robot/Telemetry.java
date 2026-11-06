@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 
 public class Telemetry {
     private final double MaxSpeed;
-    private final Field2d m_field = new Field2d();
+    public final static Field2d m_field = new Field2d();
 
     /**
      * Construct a telemetry object, with the specified max speed of the robot
@@ -100,8 +100,6 @@ public class Telemetry {
      * SignalLogger.
      */
     public void telemeterize(SwerveDriveState state) {
-        m_field.setRobotPose(state.Pose);
-        SmartDashboard.putData("Field", m_field);
 
         SmartDashboard.putNumber("Telemetry/PoseX", state.Pose.getX());
         SmartDashboard.putNumber("Telemetry/PoseY", state.Pose.getY());

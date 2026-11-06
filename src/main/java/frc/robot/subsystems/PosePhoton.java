@@ -5,7 +5,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.Telemetry;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,6 +30,8 @@ public class PosePhoton extends SubsystemBase {
     public PhotonCamera backCam  = new PhotonCamera("cam2");
     public PhotonCamera leftCam  = new PhotonCamera("cam3");
     public PhotonCamera rightCam = new PhotonCamera("cam4");
+
+    public Pose2d pose;
 
     public Transform3d robotToFrontCam = new Transform3d(
         new Translation3d(
@@ -106,9 +110,11 @@ public class PosePhoton extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    Telemetry.m_field.setRobotPose(pose);
     processCamera(frontCam, frontEstimator, "Front");
     processCamera(backCam, backEstimator, "Back");
     processCamera(leftCam, leftEstimator, "Left");
     processCamera(rightCam, rightEstimator, "Right");
+    SmartDashboard.putData("Field", Telemetry.m_field);
   }
 }
