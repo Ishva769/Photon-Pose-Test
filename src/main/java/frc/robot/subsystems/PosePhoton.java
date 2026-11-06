@@ -13,8 +13,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -27,6 +25,9 @@ public class PosePhoton extends SubsystemBase {
  // ---------- Cameras (names must match PhotonVision dashboard) ----------
     public PhotonCamera frontCam = new PhotonCamera("frontCam");
     public PhotonCamera backCam  = new PhotonCamera("backCam");
+    public PhotonCamera leftCam  = new PhotonCamera("leftCam");
+    public PhotonCamera rightCam = new PhotonCamera("rightCam");
+
     public Transform3d robotToFrontCam = new Transform3d(
         new Translation3d(
             Units.inchesToMeters(12),    // 12 in forward
@@ -46,6 +47,24 @@ public class PosePhoton extends SubsystemBase {
             0,
             Units.degreesToRadians(-20),
             Units.degreesToRadians(180))); // facing backward
+    public Transform3d robotToLeftCam = new Transform3d(
+        new Translation3d(
+            Units.inchesToMeters(0),     // centered
+            Units.inchesToMeters(-12),   // 12 in left
+            Units.inchesToMeters(8)),
+        new Rotation3d(
+            0,
+            Units.degreesToRadians(-20),
+            Units.degreesToRadians(-90))); // facing left
+    public Transform3d robotToRightCam = new Transform3d(
+        new Translation3d(
+            Units.inchesToMeters(0),     // centered
+            Units.inchesToMeters(12),    // 12 in right
+            Units.inchesToMeters(8)),
+        new Rotation3d(
+            0,
+            Units.degreesToRadians(-20),
+            Units.degreesToRadians(90))); // facing right
 
 
  // ---------- Field + estimators ----------
@@ -58,10 +77,13 @@ public class PosePhoton extends SubsystemBase {
     public PhotonPoseEstimator backEstimator =
         new PhotonPoseEstimator(fieldLayout, robotToBackCam);
 
-  public PosePhoton() {
+    public PhotonPoseEstimator leftEstimator =
+        new PhotonPoseEstimator(fieldLayout, robotToLeftCam);
 
-  }
-public void processCamera(PhotonCamera camera, PhotonPoseEstimator estimator, String label) {
+    public PhotonPoseEstimator rightEstimator =
+        new PhotonPoseEstimator(fieldLayout, robotToRightCam);
+
+    public void processCamera(PhotonCamera camera, PhotonPoseEstimator estimator, String label) {
         for (PhotonPipelineResult result : camera.getAllUnreadResults()) {
 
             if (!result.hasTargets()) continue;
@@ -78,12 +100,13 @@ public void processCamera(PhotonCamera camera, PhotonPoseEstimator estimator, St
                 SmartDashboard.putNumber(label + " Tag ID", result.getBestTarget().getFiducialId());
             }
         }
-      }
+    }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     processCamera(frontCam, frontEstimator, "Front");
     processCamera(backCam, backEstimator, "Back");
-
+    processCamera(leftCam, leftEstimator, "Left");
+    processCamera(rightCam, rightEstimator, "Right");
   }
 }
