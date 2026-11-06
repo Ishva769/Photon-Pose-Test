@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,10 +24,10 @@ import org.photonvision.targeting.PhotonPipelineResult;
 public class PosePhoton extends SubsystemBase {
   /** Creates a new PosePhoton. */
  // ---------- Cameras (names must match PhotonVision dashboard) ----------
-    public PhotonCamera frontCam = new PhotonCamera("frontCam");
-    public PhotonCamera backCam  = new PhotonCamera("backCam");
-    public PhotonCamera leftCam  = new PhotonCamera("leftCam");
-    public PhotonCamera rightCam = new PhotonCamera("rightCam");
+    public PhotonCamera frontCam = new PhotonCamera("cam1");
+    public PhotonCamera backCam  = new PhotonCamera("cam2");
+    public PhotonCamera leftCam  = new PhotonCamera("cam3");
+    public PhotonCamera rightCam = new PhotonCamera("cam4");
 
     public Transform3d robotToFrontCam = new Transform3d(
         new Translation3d(
@@ -93,6 +94,7 @@ public class PosePhoton extends SubsystemBase {
 
             if (estimate.isPresent()) {
                 Pose2d pose = estimate.get().estimatedPose.toPose2d();
+                RobotContainer.drivetrain.resetPose(pose);
 
                 SmartDashboard.putNumber(label + " X (m)", pose.getX());
                 SmartDashboard.putNumber(label + " Y (m)", pose.getY());
